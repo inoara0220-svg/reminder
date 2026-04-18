@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+
+{% block content %}
+<h1 align="center">Reminder</h1>
+<ul class="list-group list-group-flush" id="notes">
+    {% for note in user.notes %}
+    <li class="list-group-item">
+        <span onclick="enableEdit({{ note.id }}, this)">{{ note.data }}</span>
+        {% if note.remind_at %}
+            <small> - Remind at: {{ note.remind_at }}</small>
+        {% endif %}
+        <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+            <span aria-hidden="true">&times</span>
+        </button>
+    </li>
+    {% endfor %}
+</ul>
+<form method="POST">
+    <textarea name="note" class="form-control"></textarea>
+
+    <input type="date" name="remind_date" class="form-control">
+
+    <input type="time" name="remind_time" class="form-control">
+    
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add Note</button>
+    </div>
+    
+</form>
+{% endblock %}
