@@ -2,6 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime 
+
 
 db = SQLAlchemy()
 DB_NAME = ("database.db")
@@ -30,6 +33,25 @@ def create_app():
     @login_manager.user_loader
     def load_user(id):
         return User.query.get(int(id))
+    
+
+    from .notify import send_telegram
+    from .models import Note
+    
+    def check_reminders():
+         with app.app_context():
+              now = datetime.now().strftime("%Y-%m-%d %H:%M")
+              notes = Note.query.filter_by(remind_at=now, done=False).all()
+              for note in notes:
+                   send_telegram(f"Reminder: {note.data}")
+                   note.done = True
+              db.session.commit()
+
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(check_reminders, 'interval', minutes=1)
+    scheduler.start()
+
+
 
     return app 
 
