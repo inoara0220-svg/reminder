@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from .models import Note
 from . import db
 import json
+from datetime import datetime
 
 
 views = Blueprint('views', __name__)
@@ -18,6 +19,10 @@ def home():
 
         if len(note) < 1:
             flash('Note is too short!', category='error')
+        elif remind_at is None:
+            flash('The date or time is not decided.', category='error')
+        elif  datetime.strptime(remind_at, "%Y-%m-%d %H:%M") < datetime.now():
+            flash('Past dates cannot be selected.', category='error')
         else:
             new_note = Note(
                 data=note, 
@@ -41,4 +46,20 @@ def delete_note():
             db.session.delete(note)
             db.session.commit()
     
+    return jsonify({})
+
+@views.route('/edit-note', methods=['POST'])
+@login_required
+def edit_note():
+    data = json.loads(request.data)
+    noteId = data['noteId']
+    note = Note.query.get(noteId)
+    if note and note.user_id == current_user.id:
+        if data['data'] is not None:
+            note.data = data['data']
+        if data['remind_at'] is not None:
+            note.remind_at = data['remind_at']
+        db.session.commit()
+        flash('Note updated!', category='success')
+
     return jsonify({})

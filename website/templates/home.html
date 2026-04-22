@@ -7,7 +7,8 @@
     <li class="list-group-item">
         <span onclick="enableEdit({{ note.id }}, this)">{{ note.data }}</span>
         {% if note.remind_at %}
-            <small> - Remind at: {{ note.remind_at }}</small>
+            <small> - Remind at:</small>
+            <span onclick="enableDateEdit({{ note.id }}, this)"> {{ note.remind_at }} </span>
         {% endif %}
         <button type="button" class="close" onClick="deleteNote({{ note.id }})">
             <span aria-hidden="true">&times</span>
