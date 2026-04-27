@@ -16,6 +16,7 @@ def home():
         remind_date = request.form.get('remind_date')
         remind_time = request.form.get('remind_time')
         remind_at = f"{remind_date} {remind_time}"if remind_date and remind_time else None
+        interval = request.form.get('interval') 
 
         if len(note) < 1:
             flash('Note is too short!', category='error')
@@ -27,12 +28,13 @@ def home():
             new_note = Note(
                 data=note, 
                 user_id=current_user.id,
-                remind_at=remind_at
+                remind_at=remind_at,
+                interval=interval
              )
             
             db.session.add(new_note)
             db.session.commit()
-            flash('Note added', category='success')
+            flash('Reminder added!', category='success')
 
     return render_template("home.html", user=current_user)
 

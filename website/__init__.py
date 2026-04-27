@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime 
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 db = SQLAlchemy()
@@ -44,7 +45,22 @@ def create_app():
               notes = Note.query.filter_by(remind_at=now, done=False).all()
               for note in notes:
                    send_telegram(f"Reminder: {note.data}")
-                   note.done = True
+                   if not note.interval:
+                        note.done = True
+                   else:
+                    dt = datetime.strptime(note.remind_at, "%Y-%m-%d %H:%M")
+                    
+                    if note.interval == "daily":
+                        dt = dt + relativedelta(days=1)
+                    elif note.interval == "weekly":
+                        dt = dt + relativedelta(weeks=1)
+                    elif note.interval == "monthly":
+                        dt = dt + relativedelta(months=1)
+                    elif note.interval == "yearly":
+                        dt = dt + relativedelta(years=1)
+                    
+                    note.remind_at = dt.strftime("%Y-%m-%d %H:%M")
+
               db.session.commit()
 
     scheduler = BackgroundScheduler()

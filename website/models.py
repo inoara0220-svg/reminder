@@ -7,9 +7,9 @@ class Note(db.Model):
     data = db.Column(db.String(10000))
     date = db.Column(db.DateTime(timezone=True), default=func.now ())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    remind_at = db.Column(db.String(10), nullable=True)
+    remind_at = db.Column(db.String(100), nullable=True)
     done = db.Column(db.Boolean, default=False)
-
+    interval = db.Column(db.String(100), nullable=True)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)

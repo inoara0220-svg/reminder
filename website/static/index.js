@@ -14,9 +14,12 @@ function enableEdit(noteId, element) {
         <input type="text" value="${currentText}" id="editInput">
     `;
     const input = element.querySelector("input");
-    input.focus();
+    input.focus(); 
+    let isComposing = false;
+    input.addEventListener('compositionstart', () => isComposing = true);
+    input.addEventListener('compositionend', () => isComposing = false);
     input.addEventListener('keydown', function(event){
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !isComposing) {
             saveEdit(noteId, input.value, null);
         }
     });
@@ -41,3 +44,4 @@ function saveEdit(noteId, newText, newRemindAt) {
         body: JSON.stringify({ noteId: noteId, data: newText, remind_at: newRemindAt })
     }).then(() => window.location.href = '/');
 }
+
