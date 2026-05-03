@@ -35,6 +35,11 @@ def home():
             db.session.add(new_note)
             db.session.commit()
             flash('Reminder added!', category='success')
+            return render_template("home.html", user=current_user)
+
+        return render_template("home.html", user=current_user,
+                               note=note, remind_date=remind_date,
+                               remind_time=remind_time, interval=interval)
 
     return render_template("home.html", user=current_user)
 

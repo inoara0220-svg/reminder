@@ -17,18 +17,18 @@
     {% endfor %}
 </ul>
 <form method="POST">
-    <textarea name="note" class="form-control"></textarea>
+    <textarea name="note" class="form-control">{{ note or '' }}</textarea>
 
-    <input type="date" name="remind_date" class="form-control">
+    <input type="date" name="remind_date" class="form-control" value="{{ remind_date or '' }}">
 
-    <input type="time" name="remind_time" class="form-control">
-    
+    <input type="time" name="remind_time" class="form-control" value="{{ remind_time or '' }}">
+
     <select name="interval" class="form-control">
-        <option value="">No repetition</option>
-        <option value="daily">Daily</option>
-        <option value="weekly">Weekly</option>
-        <option value="monthly">Monthly</option>
-        <option value="yearly">Yearly</option>
+        <option value="" {% if not interval %}selected{% endif %}>No repetition</option>
+        <option value="daily" {% if interval == 'daily' %}selected{% endif %}>Daily</option>
+        <option value="weekly" {% if interval == 'weekly' %}selected{% endif %}>Weekly</option>
+        <option value="monthly" {% if interval == 'monthly' %}selected{% endif %}>Monthly</option>
+        <option value="yearly" {% if interval == 'yearly' %}selected{% endif %}>Yearly</option>
     </select>
 
     <div align="center">
